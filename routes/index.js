@@ -10,5 +10,8 @@ router.get('/', function(req, res) {
 
 router.get('/quizes/question',quizController.question);
 router.get('/quizes/answer',quizController.answer);
-
+// Añadimos una nueva página para Créditos
+router.get('/author', function(req, res) {
+  res.render('author', {autor: 'Jordi Díaz Salvador'});
+});
 module.exports = router;
