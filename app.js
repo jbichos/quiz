@@ -41,6 +41,33 @@ app.use( function(req, res, next) {
     next();
 });
 
+// Auto-logout
+app.use( function(req, res, next) {
+  var ahora = new Date().getTime(); // ahora - Obtener la hora actual
+  if (req.session.activo === undefined) { // Inicializar la hora de la sesion con la hora actual
+    req.session.activo = ahora;
+  }
+  //se calcula la diferencia entre las 2 fechas
+  var duracion = ahora - req.session.activo;
+  var tiempo = 2*60*1000; //el tiempo en milisegundos (2 minutos)
+  if (duracion > tiempo) {
+    //se elimina la variable inicio de la sesion
+    delete req.session.activo;
+    // si existe un usuario en la sesion se elimina de la sesion
+    if (req.session.user) {
+      delete req.session.user;
+      req.session.errors = [ { "message": 'Superado el tiempo de inactividad' } ];
+      res.redirect("/login");
+    } else {
+//      res.redirect("/");
+    }
+  } else {
+    //se actualiza los datos
+    req.session.activo = ahora;
+  }
+  next();
+});
+
 app.use('/', routes);
 //app.use('/users', users);
 
